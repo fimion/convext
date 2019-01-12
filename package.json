@@ -1,0 +1,35 @@
+{
+  "name": "convext",
+  "version": "1.0.0",
+  "main": "src/index.js",
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/fimion/convext/blob/master/LICENSE"
+    }
+  ],
+  "scripts": {
+    "build": "webpack --mode production"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fimion/convext.git"
+  },
+  "keywords": ["vue", "vuejs", "context", "convext"],
+  "author": "Alex Riviere",
+  "bugs": {
+    "url": "https://github.com/fimion/convext/issues"
+  },
+  "homepage": "https://github.com/fimion/convext#readme",
+  "dependencies": {
+    "cuid": "^2.1.4"
+  },
+  "devDependencies": {
+    "webpack": "^4.28.4",
+    "webpack-cli": "^3.2.1",
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "^7.2.2",
+    "@babel/preset-env": "^7.2.3",
+    "babel-loader": "^8.0.5"
+  }
+}
