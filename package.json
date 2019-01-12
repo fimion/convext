@@ -1,13 +1,11 @@
 {
   "name": "convext",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "main": "src/index.js",
-  "licenses": [
-    {
-      "type": "MIT",
-      "url": "https://github.com/fimion/convext/blob/master/LICENSE"
-    }
-  ],
+  "unpkg": "dist/convext.min.js",
+  "jsdelivr": "dist/convext.min.js",
+  "module": "src/index.js",
+  "license": "MIT",
   "scripts": {
     "build": "webpack --mode production"
   },
