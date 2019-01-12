@@ -121,3 +121,8 @@ fabric.properties
 !.vscode/launch.json
 !.vscode/extensions.json
 
+.gitignore
+webpack.config.js
+yarn.lock
+.npmignore
+.babelrc
