@@ -59,3 +59,6 @@ fabric.properties
 !.vscode/launch.json
 !.vscode/extensions.json
 
+node_modules/
+dist/
+.idea/
