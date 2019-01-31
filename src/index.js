@@ -1,45 +1,59 @@
 import cuid from "cuid"
 
+const defaultOptions = {
+  useProps:false,
+  defaultValue:undefined,
+  removeTag: true,
+  provideTag: 'div',
+};
 
-export default function(key, value) {
+function getKeys(key, baseID){
+  return {
+    setKey : key + "Setter-"+baseID,
+    getKey : key + "Getter-" + baseID,
+    nameKey : key + '-' + baseID,
+  }
+}
 
-  let baseID = cuid(),
-    setKey = key + "Setter-"+baseID,
-    getKey = key + "Getter-" + baseID,
-    nameKey = key + '-' + baseID;
+function makeProvideMixin(key, baseID, {useProps, defaultValue}){
 
-  let provideMixin = {
-    data() {
-      return {
-        [nameKey]: value,
-      };
-    },
-    methods: {
-      [getKey]: function() {
-        return this[nameKey];
+  let {setKey, getKey} = getKeys(key, baseID);
+
+  let mixin = {};
+  if(useProps){
+    mixin = {
+      props:{
+        [key]:defaultValue,
       },
-      [setKey]: function(data) {
-        this[nameKey] = data;
-      }
-    },
-    computed: {
-      [key]: {
-        get() {
-          return this[getKey]();
-        },
-        set(data) {
-          this[setKey](data);
+      provide(){
+        return {
+          [setKey]:(data)=>{this.$emit('update:'+key,data)},
+          [getKey]:()=>this[key],
         }
       }
-    },
-    provide() {
-      return {
-        [setKey]:this[setKey],
-        [getKey]:this[getKey],
-      };
     }
-  };
-  let injectMixin = {
+  }else{
+    mixin = {
+      data() {
+        return {
+          [key]: defaultValue,
+        };
+      },
+      provide() {
+        return {
+          [setKey]:(d)=>{this[key] = d},
+          [getKey]:()=>this[key],
+        };
+      }
+    };
+  }
+
+  return mixin;
+}
+
+function makeInjectMixin(key,baseID, options){
+  let {setKey, getKey, nameKey} = getKeys(key,baseID);
+  return {
     inject: [getKey, setKey],
     computed: {
       [key]: {
@@ -60,13 +74,73 @@ export default function(key, value) {
       }
     }
   };
+}
+
+function makeProvideComponent(key, baseID, {defaultValue, removeTag, provideTag}){
+
+  let {setKey, getKey} = getKeys(key, baseID);
 
   return {
+    props:{
+      [key]:options.defaultValue,
+    },
+    provide(){
+      return {
+        [setKey]:(d)=>{this.$emit('update:'+key,d)},
+        [getKey]:()=>this[key],
+      }
+    },
+    methods:{
+      removeProvideTag(){
+        if(!this.elementChildren) this.elementChildren = this.$el.childNodes;
+        if(!this.elementParent) this.elementParent = this.$el.parentNode;
+        if(!this.element){
+          this.elementChildren.forEach(e=>this.elementParent.insertBefore(e, this.$el));
+          this.element = this.elementParent.removeChild(this.$el);
+        }
+      }
+    },
+    mounted(){
+      if(removeTag){this.$nextTick(this.removeProvideTag);}
+    },
+    updated(){
+      if(removeTag){this.$nextTick(this.removeProvideTag);}
+    },
+    render(h){
+      return h(provideTag,this.$slots.default);
+    }
+  }
+}
+
+function makeInjectComponent(key, baseID, options){
+  let {setKey, getKey, nameKey} = getKeys(key,baseID);
+  return {
+    functional:true,
+    inject:[setKey, getKey],
+    render(h,ctx){
+      let slotScope = {
+        [key]:ctx.injections[getKey](),
+        ['set_'+key]:ctx.injections[setKey],
+        [nameKey]:ctx.injections[getKey](),
+        ['set_'+nameKey]: ctx.injections[setKey],
+      };
+      return ctx.data.scopedSlots.default
+        ? ctx.data.scopedSlots.default(slotScope)
+        :ctx.slots().default
+    }
+  }
+}
+
+export default function(key, userOptions) {
+  let options = Object.assign(defaultOptions,userOptions);
+  let baseID = cuid();
+  return {
+    key,
     baseID,
-    getKey,
-    setKey,
-    nameKey,
-    provideMixin,
-    injectMixin,
+    provideMixin: ()=>makeProvideMixin(key, baseID, options),
+    injectMixin: ()=>makeInjectMixin(key, baseID, options),
+    provideComponent: ()=>makeProvideComponent(key, baseID, options),
+    injectComponent: ()=>makeInjectComponent(key, baseID, options),
+    ...getKeys(key, baseID),
   };
 }

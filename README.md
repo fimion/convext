@@ -13,7 +13,7 @@ To use Convext you only need to import it:
 // name-convext.js
 import Convext from 'convext'
 
-export default Convext('name','Sally');
+export default Convext('name',{defaultValue:'Sally'});
 ```
 
 Then to add the reactive properties you can simply add it to your components.
@@ -32,7 +32,7 @@ Then to add the reactive properties you can simply add it to your components.
   import NameDisplay from "./name-display"
   export default {
     // since this is Parent we want to Provide the data.
-    mixins:[NameConvext.provideMixin],
+    mixins:[NameConvext.provideMixin()],
     components:{NameDisplay}
   }
 </script>
@@ -47,7 +47,7 @@ Then to add the reactive properties you can simply add it to your components.
   import NameConvext from "./name-convext.js"
   export default {
     // since this is a child component we want to inject the data.
-    mixins:[NameConvext.injectMixin]
+    mixins:[NameConvext.injectMixin()]
   }
 </script>
 ```
