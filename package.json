@@ -1,6 +1,6 @@
 {
   "name": "convext",
-  "version": "0.2.0",
+  "version": "0.2.0-beta1",
   "main": "src/index.js",
   "unpkg": "dist/convext.min.js",
   "jsdelivr": "dist/convext.min.js",
