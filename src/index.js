@@ -82,7 +82,7 @@ function makeProvideComponent(key, baseID, {defaultValue, removeTag, provideTag}
 
   return {
     props:{
-      [key]:options.defaultValue,
+      [key]:defaultValue,
     },
     provide(){
       return {
