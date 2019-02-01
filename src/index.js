@@ -1,11 +1,18 @@
 import cuid from "cuid"
 
-const defaultOptions = {
-  useProps:false,
-  defaultValue:undefined,
-  removeTag: true,
-  provideTag: 'div',
-};
+function defaultOptions(userOptions){
+  let userOpts = typeof userOptions === 'object'?userOptions:{};
+  let defaultOptions = {
+    useProps:false,
+    defaultValue:undefined,
+    removeTag: true,
+    provideTag: 'div',
+  };
+  let options = Object.assign(defaultOptions,userOpts);
+  return options;
+}
+
+
 
 function getKeys(key, baseID){
   return {
@@ -132,7 +139,7 @@ function makeInjectComponent(key, baseID, options){
 }
 
 export default function(key, userOptions) {
-  let options = Object.assign(defaultOptions,userOptions);
+  let options = defaultOptions(userOptions);
   let baseID = cuid();
   return {
     key,
